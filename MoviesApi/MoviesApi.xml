@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MoviesApi</name>
+    </assembly>
+    <members>
+        <member name="M:MoviesApi.Services.InMemoryRepository.GetAllGenres">
+            <summary>
+            Method to return the current list of Genres
+            </summary>
+            <returns>List of Genres</returns>
+        </member>
+        <member name="M:MoviesApi.Services.InMemoryRepository.GetGenreByID(System.Int32)">
+            <summary>
+            Returns one genre with the matching ID
+            </summary>
+            <param name="id">ID of the Genre to get</param>
+            <returns>Genre</returns>
+        </member>
+        <member name="M:MoviesApi.Services.InMemoryRepository.AddGenre(MoviesApi.Entities.Genre)">
+            <summary>
+            Adds a new Genre to the genre list
+            </summary>
+            <param name="genre">New genre to add</param>
+        </member>
+        <member name="M:MoviesApi.Services.IRepository.GetAllGenres">
+            <summary>
+            Method to return the current list of Genres
+            </summary>
+            <returns>List of Genres</returns>
+        </member>
+        <member name="M:MoviesApi.Services.IRepository.GetGenreByID(System.Int32)">
+            <summary>
+            Returns one genre with the matching ID
+            </summary>
+            <param name="id">ID of the Genre to get</param>
+            <returns>Genre</returns>
+        </member>
+        <member name="M:MoviesApi.Services.IRepository.AddGenre(MoviesApi.Entities.Genre)">
+            <summary>
+            Adds a new Genre to the genre list
+            </summary>
+            <param name="genre">New genre to add</param>
+        </member>
+        <member name="T:MoviesApi.Validations.FirstLetterUppercaseAttribute">
+            <summary>
+            A custom Attribute Validation to ensure the first letter is uppercase
+            </summary>
+        </member>
+    </members>
+</doc>
