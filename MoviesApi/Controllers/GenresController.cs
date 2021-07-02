@@ -1,65 +1,68 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MoviesApi.DTO;
 using MoviesApi.Entities;
-using MoviesApi.Filters;
-using MoviesApi.Services;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MoviesApi.Controllers
 {
     [Route("api/genres")] // Route for the URL to take when accessing the API
     [ApiController] // Automatic Checking for request errors
-    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] // Adding in authorization
     public class GenresController : ControllerBase
     {
-        private readonly IRepository _repository;
         private readonly ILogger<GenresController> _logger;
+        private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public GenresController(IRepository repository, ILogger<GenresController> logger)
+        public GenresController
+            (
+                ApplicationDbContext context,
+                IMapper mapper,
+                ILogger<GenresController> logger
+            )
         {
-            _repository = repository;
             _logger = logger;
+            _context = context;
+            _mapper = mapper;
         }
 
-        // You can use multiple routes for one method
         [HttpGet]
-        [HttpGet("list")] // This will add to the default route - so it becomes api/genres/list
-        [HttpGet("/allgenres")] // This will override the default route - so it becomes api/allgenres
-        [ResponseCache(Duration = 60)] // Caches the data for 60 seconds
-        [ServiceFilter(typeof(MyActionFilter))] // Custom filter
-        public async Task<ActionResult<List<Genre>>> Get()
+        public async Task<ActionResult<List<GenreDTO>>> Get()
         {
-            _logger.LogInformation("Getting all the genres");
-            return await _repository.GetAllGenres();
+            var genre = await _context.Genres.AsNoTracking().ToListAsync();
+            var genreDTOs = _mapper.Map<List<GenreDTO>>(genre);
+
+            return genreDTOs;
         }
 
-        [HttpGet("{id:int}", Name = "getGenre")] // Added a route contraint
-        // [HttpGet("{id:int}/{param2=Elliot}")] // Routes can also have multiple paramaters and can be set with a default value
-        public ActionResult<Genre> Get(int id, string param2)
+        [HttpGet("{id:int}", Name = "getGenre")]
+        public async Task<ActionResult<GenreDTO>> Get(int id)
         {
-            _logger.LogDebug($"Get by ID method executing using ID {id}");
-
-            var genre = _repository.GetGenreByID(id);
+            var genre = await _context.Genres.FirstOrDefaultAsync(x => x.ID == id);
 
             if (genre == null)
             {
-                _logger.LogWarning($"Genre with ID {id} not found");
                 return NotFound();
             }
-            return genre;
+
+            var genreDTO = _mapper.Map<GenreDTO>(genre);
+            return genreDTO;
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] Genre genre)
+        public async Task<ActionResult> Post([FromBody] GenreCreationDTO genreCreation)
         {
-            _repository.AddGenre(genre);
-            return new CreatedAtRouteResult("getGenre", new { id = genre.ID }, genre);
+            var genre = _mapper.Map<Genre>(genreCreation);
+
+            _context.Add(genre);
+            await _context.SaveChangesAsync();
+
+            var genreDTO = _mapper.Map<GenreDTO>(genre);
+
+            return new CreatedAtRouteResult("getGenre", new { genreDTO.ID }, genreDTO);
         }
 
         [HttpPut]
