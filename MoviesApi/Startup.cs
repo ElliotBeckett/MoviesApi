@@ -36,10 +36,14 @@ namespace MoviesApi
 
             services.AddAutoMapper(typeof(Startup));
 
+            services.AddTransient<IFileStorageService, InAppStorageService>();
+            services.AddHttpContextAccessor();
+
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(MyExceptionFilter)); // Globally applying our custom exception filter
-            }).AddXmlDataContractSerializerFormatters(); // Adds in the ability to send data in XML format
+            }).AddNewtonsoftJson()
+                .AddXmlDataContractSerializerFormatters(); // Adds in the ability to send data in XML format
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +55,8 @@ namespace MoviesApi
             }
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 

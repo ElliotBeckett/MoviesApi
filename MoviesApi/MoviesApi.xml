@@ -4,6 +4,11 @@
         <name>MoviesApi</name>
     </assembly>
     <members>
+        <member name="M:MoviesApi.Helpers.HttpContextExtensions.InsertPaginationParametersInResponse``1(Microsoft.AspNetCore.Http.HttpContext,System.Linq.IQueryable{``0},System.Int32)">
+            <summary>
+            Custom method to count the total amount of pages of requested records.
+            </summary>
+        </member>
         <member name="T:MoviesApi.Validations.FirstLetterUppercaseAttribute">
             <summary>
             A custom Attribute Validation to ensure the first letter is uppercase

@@ -65,15 +65,32 @@ namespace MoviesApi.Controllers
             return new CreatedAtRouteResult("getGenre", new { genreDTO.ID }, genreDTO);
         }
 
-        [HttpPut]
-        public ActionResult Put([FromBody] Genre genre)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody] GenreCreationDTO genreCreation)
         {
+            var genre = _mapper.Map<Genre>(genreCreation);
+            genre.ID = id;
+
+            _context.Entry(genre).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
-        [HttpDelete]
-        public ActionResult Delete()
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
         {
+            var exists = await _context.Genres.AnyAsync(x => x.ID == id);
+
+            if (!exists)
+            {
+                return NotFound();
+            }
+
+            _context.Remove(new Genre() { ID = id });
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }
