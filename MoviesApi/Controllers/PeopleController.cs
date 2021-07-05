@@ -35,7 +35,7 @@ namespace MoviesApi.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "getPeople")]
         public async Task<ActionResult<List<PersonDTO>>> Get([FromQuery] PaginationDTO pagination)
         {
             var queryable = _context.People.AsQueryable();

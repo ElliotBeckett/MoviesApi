@@ -4,6 +4,13 @@
         <name>MoviesApi</name>
     </assembly>
     <members>
+        <member name="M:MoviesApi.Controllers.GenresController.Delete(System.Int32)">
+            <summary>
+            Deletes a Genre with the matching ID
+            </summary>
+            <param name="id">ID of the genre to delete</param>
+            <returns>Null</returns>
+        </member>
         <member name="M:MoviesApi.Controllers.MoviesController.AnnotateActorsOrder(MoviesApi.Entities.Movie)">
             <summary>
             Custom method to mark the order of actors as they appear in the array

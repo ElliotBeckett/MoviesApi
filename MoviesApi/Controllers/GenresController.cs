@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MoviesApi.DTO;
 using MoviesApi.Entities;
+using MoviesApi.Helpers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -31,17 +33,22 @@ namespace MoviesApi.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "getGenres")]
+        [EnableCors(PolicyName = "AllowAPIRequestIO")]
+        [ServiceFilter(typeof(GenreHATEOASAttribute))]
         // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] // Sets this end point to require Authorization before use
-        public async Task<ActionResult<List<GenreDTO>>> Get()
+        public async Task<IActionResult> Get()
         {
             var genre = await _context.Genres.AsNoTracking().ToListAsync();
             var genreDTOs = _mapper.Map<List<GenreDTO>>(genre);
 
-            return genreDTOs;
+            return Ok(genreDTOs);
         }
 
         [HttpGet("{id:int}", Name = "getGenre")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(GenreDTO), 200)]
+        [ServiceFilter(typeof(GenreHATEOASAttribute))]
         public async Task<ActionResult<GenreDTO>> Get(int id)
         {
             var genre = await _context.Genres.FirstOrDefaultAsync(x => x.ID == id);
@@ -52,10 +59,11 @@ namespace MoviesApi.Controllers
             }
 
             var genreDTO = _mapper.Map<GenreDTO>(genre);
+
             return genreDTO;
         }
 
-        [HttpPost]
+        [HttpPost(Name = "createGenre")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")] // Sets this end point to require Authorization before use and only accessible by the Admin role
         public async Task<ActionResult> Post([FromBody] GenreCreationDTO genreCreation)
         {
@@ -69,7 +77,7 @@ namespace MoviesApi.Controllers
             return new CreatedAtRouteResult("getGenre", new { genreDTO.ID }, genreDTO);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}", Name = "putGenre")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public async Task<ActionResult> Put(int id, [FromBody] GenreCreationDTO genreCreation)
         {
@@ -83,7 +91,12 @@ namespace MoviesApi.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        /// <summary>
+        /// Deletes a Genre with the matching ID
+        /// </summary>
+        /// <param name="id">ID of the genre to delete</param>
+        /// <returns>Null</returns>
+        [HttpDelete("{id}", Name = "deleteGenre")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
