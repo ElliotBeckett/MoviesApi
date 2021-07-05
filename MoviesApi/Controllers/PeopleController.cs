@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -60,6 +62,7 @@ namespace MoviesApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public async Task<ActionResult> Post([FromForm] PersonCreationDTO personCreation)
         {
             var person = _mapper.Map<Person>(personCreation);
@@ -84,6 +87,7 @@ namespace MoviesApi.Controllers
         }
 
         [HttpPut("{id}")] // HttpPut does a complete update - If a field isn't sent as part of the update, it sets them to null/default
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public async Task<ActionResult> Put(int id, [FromForm] PersonCreationDTO personCreationDTO)
         {
             var personDB = await _context.People.FirstOrDefaultAsync(x => x.ID == id);
@@ -115,6 +119,7 @@ namespace MoviesApi.Controllers
         }
 
         [HttpPatch("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public async Task<ActionResult> Patch(int id, [FromBody] JsonPatchDocument<PersonPatchDTO> patchDocument)
         {
             if (patchDocument == null)
@@ -148,6 +153,7 @@ namespace MoviesApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             var exists = await _context.People.AnyAsync(x => x.ID == id);

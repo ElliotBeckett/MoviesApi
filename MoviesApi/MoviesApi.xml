@@ -4,9 +4,25 @@
         <name>MoviesApi</name>
     </assembly>
     <members>
+        <member name="M:MoviesApi.Controllers.MoviesController.AnnotateActorsOrder(MoviesApi.Entities.Movie)">
+            <summary>
+            Custom method to mark the order of actors as they appear in the array
+            </summary>
+        </member>
         <member name="M:MoviesApi.Helpers.HttpContextExtensions.InsertPaginationParametersInResponse``1(Microsoft.AspNetCore.Http.HttpContext,System.Linq.IQueryable{``0},System.Int32)">
             <summary>
             Custom method to count the total amount of pages of requested records.
+            </summary>
+        </member>
+        <member name="T:MoviesApi.Helpers.TypeBinder`1">
+            <summary>
+            Custom model binder to convert an array into a List
+            </summary>
+        </member>
+        <member name="M:MoviesApi.Services.MovieInTheaterService.DoWork(System.Object)">
+            <summary>
+            Custom method to check if a movie release date is the same as today.
+            If it is, then set the movie to be InTheaters
             </summary>
         </member>
         <member name="T:MoviesApi.Validations.FirstLetterUppercaseAttribute">

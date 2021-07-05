@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -30,6 +32,7 @@ namespace MoviesApi.Controllers
         }
 
         [HttpGet]
+        // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] // Sets this end point to require Authorization before use
         public async Task<ActionResult<List<GenreDTO>>> Get()
         {
             var genre = await _context.Genres.AsNoTracking().ToListAsync();
@@ -53,6 +56,7 @@ namespace MoviesApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")] // Sets this end point to require Authorization before use and only accessible by the Admin role
         public async Task<ActionResult> Post([FromBody] GenreCreationDTO genreCreation)
         {
             var genre = _mapper.Map<Genre>(genreCreation);
@@ -66,6 +70,7 @@ namespace MoviesApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public async Task<ActionResult> Put(int id, [FromBody] GenreCreationDTO genreCreation)
         {
             var genre = _mapper.Map<Genre>(genreCreation);
@@ -79,6 +84,7 @@ namespace MoviesApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             var exists = await _context.Genres.AnyAsync(x => x.ID == id);

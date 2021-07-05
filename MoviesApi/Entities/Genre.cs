@@ -15,5 +15,7 @@ namespace MoviesApi.Entities
         [StringLength(40)] // Sets the min & max length a string/value can be
         [FirstLetterUppercase] // Custom attribute validation - This can be used anywhere on any model.
         public string Name { get; set; }
+
+        public List<MoviesGenres> MoviesGenres { get; set; }
     }
 }

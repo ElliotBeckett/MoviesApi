@@ -24,3 +24,8 @@ namespace MoviesApi
                 });
     }
 }
+
+/*.ConfigureAppConfiguration((env, config) =>
+{
+    config.AddJsonFile("custom.json", optional: true, reloadOnChange: true);
+}) // It is possible to create your own configuration file */
